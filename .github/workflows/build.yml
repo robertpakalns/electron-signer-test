@@ -10,6 +10,7 @@ jobs:
 
     permissions:
       contents: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -47,3 +48,10 @@ jobs:
       - run: npm run build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: sigstore/cosign-installer@v3.9.1
+      - run: |
+          for file in dist/*; do
+            echo "Signing $file"
+            cosign sign --yes $file
+          done
